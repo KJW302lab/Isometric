@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
+    [SerializeField] private TileBase clickedTile;
     
     public Tilemap map;
     
@@ -42,18 +43,50 @@ public class CharacterMovement : MonoBehaviour
         // make sure we are clicking the cell
         Vector3Int gridPosition = map.WorldToCell(mousePosition);
         
-        if (map.HasTile(gridPosition))
+        SelectTiles(gridPosition);
+    }
+
+    void SelectTiles(Vector3Int gridPosition)
+    {
+        var list = MakeList(gridPosition);
+        
+        foreach (var pos in list)
         {
-            _destination = mousePosition;
+            map.SetTile(pos, clickedTile);
         }
+    }
+
+    List<Vector3Int> MakeList(Vector3Int gridPosition)
+    {
+        List<Vector3Int> list = new();
+        int[] arr = new[] { -1, 1, -1, 1 };
+
+        var pos = new Vector3Int();
+        
+        for (int i = 0; i < 4; i++)
+        {
+            if (i <= 1)
+            {
+                pos = new Vector3Int((int)gridPosition.x + arr[i], (int)gridPosition.y);
+            }
+            else
+            {
+                pos = new Vector3Int((int)gridPosition.x, (int)gridPosition.y + arr[i]);
+            }
+
+            if (map.HasTile(pos))
+            {
+                list.Add(pos);
+            }
+        }
+
+        return list;
     }
 
     private void Update()
     {
-        if (Vector3.Distance(transform.position, _destination) > 0.1f)
-            transform.position = Vector3.MoveTowards(transform.position, _destination,
-                movementSpeed * Time.deltaTime);
-        
-        
+        // if (Vector3.Distance(transform.position, _destination) > 0.1f)
+        //     transform.position = Vector3.MoveTowards(transform.position, _destination,
+        //         movementSpeed * Time.deltaTime);
     }
 }
