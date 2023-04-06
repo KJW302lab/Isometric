@@ -6,11 +6,4 @@ public class EnemyCharacter : LivingEntity
 {
     [SerializeField] 
     private CharacterData data;
-
-    public override void Awake()
-    {
-        base.Awake();
-        
-        SetData(data);
-    }
 }
