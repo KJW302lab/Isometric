@@ -10,6 +10,11 @@ public class LivingEntity : MonoBehaviour
     protected int Ap;
     protected int Att;
 
+    public virtual void Awake()
+    {
+        SequenceManager.Instance.RegisterCharacter(this);
+    }
+
     protected void SetData(CharacterData data)
     {
         ClassName = data.className;

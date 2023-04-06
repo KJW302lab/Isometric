@@ -8,8 +8,10 @@ public class PlayerCharacter : LivingEntity
     [SerializeField] 
     private CharacterData data;
 
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
+        
         SetData(data);
     }
 }
