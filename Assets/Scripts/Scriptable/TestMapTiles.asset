@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f02839854d91242af93a694c2d82f93e, type: 3}
-  m_Name: Warrior
+  m_Script: {fileID: 11500000, guid: c5238142f03474f8fb37b8176e4d95db, type: 3}
+  m_Name: TestMapTiles
   m_EditorClassIdentifier: 
-  type: 0
-  attackRange: 1
-  attackPoint: 5
-  attackSpeed: 3
+  ground: {fileID: 11400000, guid: d5cf36522a85d459b81c92e641741cf9, type: 2}
+  path: {fileID: 11400000, guid: d002dad8c80c140c38201a31088b3aa7, type: 2}

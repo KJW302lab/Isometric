@@ -7,10 +7,7 @@ using UnityEngine.Tilemaps;
 public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
-    [SerializeField] private TileBase clickedTile;
-    
-    public Tilemap map;
-    
+
     private MouseInput _mouseInput;
     private Vector3 _destination;
 
@@ -41,18 +38,12 @@ public class CharacterMovement : MonoBehaviour
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         
         // make sure we are clicking the cell
+        var map = TilemapManager.Instance.Ground;
         Vector3Int gridPosition = map.WorldToCell(mousePosition);
 
         if (map.HasTile(gridPosition))
         {
-            _destination = mousePosition;
+            print(gridPosition);
         }
-    }
-
-    private void Update()
-    {
-        if (Vector3.Distance(transform.position, _destination) > 0.1f)
-            transform.position = Vector3.MoveTowards(transform.position, _destination,
-                movementSpeed * Time.deltaTime);
     }
 }

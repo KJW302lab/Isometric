@@ -4,3 +4,12 @@ public enum ClassType
     Mage,
     Archer,
 }
+
+public enum TileType
+{
+    None,
+    Start,
+    End,
+    Grass,
+    Road,
+}
