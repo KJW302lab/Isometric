@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class WaveManager : MonoBehaviour
 {
     public GameObject enemyObj;
     public int amount;
 
+    private int _id = 1;
+    
     private float _speed = 1;
     private int _looped = 0;
     private Queue<GameObject> _enemyList = new();
@@ -19,7 +21,7 @@ public class EnemyManager : MonoBehaviour
             GameObject go = Instantiate(enemyObj);
             
             go.SetActive(false);
-            
+
             _enemyList.Enqueue(go);
         }
 
@@ -38,7 +40,7 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator StartAttack(GameObject enemy)
     {
-        var path = TilemapManager.Instance.GetPath();
+        var path = TilemapManager.Instance.GetPathToGo();
         var startPoint = path.Dequeue();
 
         enemy.transform.position = startPoint;

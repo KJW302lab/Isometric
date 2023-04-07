@@ -28,6 +28,13 @@ public class TilemapManager : Singleton<TilemapManager>
     private List<Vector3Int>                 _roads = new();
     private Queue<Vector3Int>                _path = new();
 
+    
+    
+    private void Awake()
+    {
+        MakeDict();
+    }
+    
     private void MakeDict()
     {
         foreach (Vector3Int pos in Ground.cellBounds.allPositionsWithin)
@@ -60,12 +67,12 @@ public class TilemapManager : Singleton<TilemapManager>
         _roads.Add(_goalTile);
     }
 
-    private void Awake()
+    private bool IsRoadTile(Vector3Int tile)
     {
-        MakeDict();
+        return Ground.GetTile(tile).name == "Road";
     }
 
-    public Queue<Vector3> GetPath()
+    public Queue<Vector3> GetPathToGo()
     {
         if (_path.Count <= 0)
         {
@@ -80,5 +87,35 @@ public class TilemapManager : Singleton<TilemapManager>
         }
 
         return worldPath;
+    }
+
+    public Vector3Int GetCurrentTile(Vector3 currentPosition)
+    {
+        return Ground.WorldToCell(currentPosition);
+    }
+
+    public List<Vector3Int> GetTilesInRange(Vector3Int currentTile ,int attackRange)
+    {
+        List<Vector3Int> list = new();
+
+        Vector3Int start = new Vector3Int(currentTile.x - attackRange, currentTile.y - attackRange, 0);
+
+        int searchRange = attackRange * 2 + 1; 
+        
+        for (int i = 0; i < searchRange; i++)
+        {
+            for (int j = 0; j < searchRange; j++)
+            {
+                Vector3Int specificTile = new Vector3Int(start.x + i, start.y + j, 0);
+
+                if (!Ground.HasTile(specificTile)) continue;
+
+                if (!IsRoadTile(specificTile)) continue;
+                
+                list.Add(specificTile);
+            }
+        }
+
+        return list;
     }
 }

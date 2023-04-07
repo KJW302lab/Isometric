@@ -1,5 +1,6 @@
 public enum ClassType
 {
+    None,
     Warrior,
     Mage,
     Archer,
