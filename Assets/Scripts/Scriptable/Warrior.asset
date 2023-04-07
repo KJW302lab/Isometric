@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   attackRange: 1
-  attackPoint: 5
+  attackPoint: 3
   attackSpeed: 3
