@@ -60,24 +60,4 @@ public class EnemyManager : MonoBehaviour
             }   
         }
     }
-
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.Q))
-        {
-            _speed++;
-        }
-
-        if (Input.GetKey(KeyCode.E))
-        {
-            _speed--;
-
-            if (_speed <= 0)
-            {
-                _speed = 1;
-            }
-        }
-        
-        print(_speed);
-    }
 }
