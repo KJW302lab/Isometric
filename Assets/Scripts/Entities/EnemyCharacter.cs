@@ -7,7 +7,6 @@ public class EnemyCharacter : MonoBehaviour
 {
     [SerializeField] private Scrollbar hpIndicator;
     
-    public int id;
     public GameObject monsterObj;
     public bool isAlive = true;
 
@@ -26,13 +25,12 @@ public class EnemyCharacter : MonoBehaviour
         set => _speed = value;
     }
     
-    public void Initialize(EnemyData enemyData, int id, GameObject monsterObj)
+    public void Initialize(EnemyData enemyData, GameObject monsterObj)
     {
         Speed = enemyData.speed;
         Hp = enemyData.hp;
         _maxHp = enemyData.hp;
         
-        this.id = id;
         this.monsterObj = monsterObj;
     }
 

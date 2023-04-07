@@ -3,28 +3,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveManager : MonoBehaviour
+public class WaveInfo
 {
-    public GameObject enemyObj;
-    public EnemyData data;
-    public int amount;
+    public Dictionary<EnemyType, int> WaveDict = new();
 
-    private int _id = 0;
-    private Queue<EnemyCharacter> _enemyList = new();
-
-    private void Start()
+    public void AddWave(EnemyType enemyType, int value)
     {
-        for (int i = 0; i < amount; i++)
+        WaveDict.Add(enemyType, value);
+    }
+}
+
+public class WaveManager : Singleton<WaveManager>
+{
+    private int _intervalSec = 3;
+    private Queue<EnemyCharacter> _enemyList = new();
+    
+    public bool IsWaveOver { get; private set; } = true;
+    
+    private UIMain UIMain => UIManager.Instance.GetUI<UIMain>();
+    
+
+    public void StartInterval(WaveInfo info)
+    {
+        IsWaveOver = false;
+        UIMain.AddMonsterInfo(info);
+        StartCoroutine(StartCountDown(info));
+    }
+    
+    IEnumerator StartCountDown(WaveInfo info)
+    {
+        while (_intervalSec >= 0)
         {
-            GameObject go = Instantiate(enemyObj);
-            
-            go.SetActive(false);
+            yield return new WaitForSeconds(1f);
 
-            EnemyCharacter enemyCharacter = go.GetComponent<EnemyCharacter>();
+            _intervalSec--;
             
-            enemyCharacter.Initialize(data, ++_id, go);
+            UIMain.SetTimerText(_intervalSec);
+        }
+        
+        BeginWave(info);
+    }
 
-            _enemyList.Enqueue(enemyCharacter);
+    private void BeginWave(WaveInfo info)
+    {
+        foreach (var pair in info.WaveDict)
+        {
+            var value = pair.Value;
+            var type = pair.Key;
+            var data = SceneManager.Instance.GetEnemyData(type);
+
+            for (int i = 0; i < value; i++)
+            {
+                GameObject go = SceneManager.Instance.GetEnemyPrefab(type);
+            
+                go.SetActive(false);
+
+                EnemyCharacter enemyCharacter = go.GetComponent<EnemyCharacter>();
+            
+                enemyCharacter.Initialize(data, go);
+
+                _enemyList.Enqueue(enemyCharacter);
+            }   
         }
 
         StartCoroutine(StartWave());

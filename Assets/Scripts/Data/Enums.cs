@@ -14,3 +14,8 @@ public enum TileType
     Grass,
     Road,
 }
+
+public enum EnemyType
+{
+    Man,
+}
