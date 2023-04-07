@@ -51,7 +51,5 @@ public class EnemyCharacter : MonoBehaviour
             isAlive = false;
             Destroy(monsterObj);
         }
-        
-        print(Hp);
     }
 }
