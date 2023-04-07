@@ -18,18 +18,15 @@ public class TilemapManager : Singleton<TilemapManager>
 {
     // properties
     private SceneGrid SceneGrid => FindObjectOfType<SceneGrid>();
+    public Tilemap Ground => SceneGrid.Ground; 
     
     // fields
     private Vector3Int _startTile;
     private Vector3Int _goalTile;
     
-    private List<Vector3Int> _roads = new();
-    private Queue<Vector3Int> _path = new();
-
-    public Tilemap Ground => SceneGrid.Ground; 
-    
-    // fields
     private Dictionary<Vector3Int, TileData> _tileDict = new();
+    private List<Vector3Int>                 _roads = new();
+    private Queue<Vector3Int>                _path = new();
 
     private void MakeDict()
     {
@@ -66,6 +63,22 @@ public class TilemapManager : Singleton<TilemapManager>
     private void Awake()
     {
         MakeDict();
-        _path = PathFind.GetPathList(_startTile, _goalTile, _roads);
+    }
+
+    public Queue<Vector3> GetPath()
+    {
+        if (_path.Count <= 0)
+        {
+            _path = PathFind.GetPathList(_startTile, _goalTile, _roads);
+        }
+
+        Queue<Vector3> worldPath = new();
+        
+        foreach (Vector3Int tile in _path)
+        {
+            worldPath.Enqueue(Ground.CellToWorld(tile));
+        }
+
+        return worldPath;
     }
 }
