@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f02839854d91242af93a694c2d82f93e, type: 3}
-  m_Name: Warrior
+  m_Name: Mage
   m_EditorClassIdentifier: 
-  type: 0
-  attackRange: 1
-  attackPoint: 7
-  attackSpeed: 1
+  type: 2
+  attackRange: 3
+  attackPoint: 5
+  attackSpeed: 2

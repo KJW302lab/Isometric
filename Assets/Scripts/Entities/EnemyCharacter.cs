@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyCharacter : MonoBehaviour
 {
-    public string monsterName;
+    [SerializeField] private Scrollbar hpIndicator;
+    
     public int id;
     public GameObject monsterObj;
     public bool isAlive = true;
 
+    private int _maxHp;
     private int _hp = 0;
     private float _speed = 0;
 
@@ -25,9 +28,10 @@ public class EnemyCharacter : MonoBehaviour
     
     public void Initialize(EnemyData enemyData, int id, GameObject monsterObj)
     {
-        monsterName = enemyData.monsterName;
         Speed = enemyData.speed;
         Hp = enemyData.hp;
+        _maxHp = enemyData.hp;
+        
         this.id = id;
         this.monsterObj = monsterObj;
     }
@@ -40,11 +44,12 @@ public class EnemyCharacter : MonoBehaviour
         }
         
         Hp -= attackPoint;
+        hpIndicator.size = (float)Hp / _maxHp;
 
         if (Hp <= 0)
         {
             isAlive = false;
-            monsterObj.SetActive(false);
+            Destroy(monsterObj);
         }
         
         print(Hp);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
@@ -13,6 +14,7 @@ public class PlayerCharacter : MonoBehaviour
     private float _attackSpeed = -1f;
 
     private bool _canAttack = true;
+    private List<EnemyDetector> _colliders = new();
 
     #region Properties
     // stats
@@ -75,26 +77,46 @@ public class PlayerCharacter : MonoBehaviour
     }
     
     // about attack
-    protected Vector3Int CurrentTile => TilemapManager.Instance.GetCurrentTile(transform.position);
+    protected Vector3Int CurrentTile => TilemapManager.Instance.WorldToCell(transform.position);
     protected List<Vector3Int> TilesInRange => TilemapManager.Instance.GetTilesInRange(CurrentTile, AttackRange);
     #endregion
 
     private void Start()
     {
-        TilemapManager.Instance.EnemiesOnTile += AttackEnemy;
+        SetColliders();
     }
 
-    void AttackEnemy(Vector3Int tile, EnemyCharacter enemy)
+    private void SetColliders()
     {
-        foreach (Vector3Int road in TilesInRange)
+        if (_colliders.Count > 0)
         {
-            if (tile == road)
+            foreach (var circleCollider in _colliders)
             {
-                if (_canAttack)
-                {
-                    StartCoroutine(Attack(enemy));
-                }
+                Destroy(circleCollider.gameObject);
             }
+        }
+        
+        _colliders.Clear();
+        
+        foreach (Vector3Int tile in TilesInRange)
+        {
+            var go = new GameObject { name = $"Collider {tile}" };
+
+            EnemyDetector detector = go.AddComponent<EnemyDetector>();
+            
+            detector.Initialize(this, tile);
+
+            detector.EnemyDetected += AttackEnemy;
+
+            _colliders.Add(detector);
+        }
+    }
+
+    void AttackEnemy(EnemyCharacter enemy)
+    {
+        if (_canAttack)
+        {
+            StartCoroutine(Attack(enemy));
         }
     }
 

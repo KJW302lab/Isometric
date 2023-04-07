@@ -16,8 +16,6 @@ public class TileData
 
 public class TilemapManager : Singleton<TilemapManager>
 {
-    public event Action<Vector3Int, EnemyCharacter> EnemiesOnTile; 
-
     // properties
     private SceneGrid SceneGrid => FindObjectOfType<SceneGrid>();
     public Tilemap Ground => SceneGrid.Ground; 
@@ -91,9 +89,14 @@ public class TilemapManager : Singleton<TilemapManager>
         return worldPath;
     }
 
-    public Vector3Int GetCurrentTile(Vector3 currentPosition)
+    public Vector3Int WorldToCell(Vector3 currentPosition)
     {
         return Ground.WorldToCell(currentPosition);
+    }
+
+    public Vector3 CellToWorld(Vector3Int cell)
+    {
+        return Ground.CellToWorld(cell);
     }
 
     public List<Vector3Int> GetTilesInRange(Vector3Int currentTile ,int attackRange)
@@ -119,12 +122,5 @@ public class TilemapManager : Singleton<TilemapManager>
         }
 
         return list;
-    }
-
-    public void EnemyOnTile(Vector3 position, EnemyCharacter enemyCharacter)
-    {
-        var tile = Ground.WorldToCell(position);
-        
-        EnemiesOnTile?.Invoke(tile, enemyCharacter);
     }
 }

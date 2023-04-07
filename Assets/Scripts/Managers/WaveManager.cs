@@ -20,7 +20,7 @@ public class WaveManager : MonoBehaviour
             
             go.SetActive(false);
 
-            EnemyCharacter enemyCharacter = go.AddComponent<EnemyCharacter>();
+            EnemyCharacter enemyCharacter = go.GetComponent<EnemyCharacter>();
             
             enemyCharacter.Initialize(data, ++_id, go);
 
@@ -57,8 +57,6 @@ public class WaveManager : MonoBehaviour
         {
             var dest = path.Dequeue();
 
-            var distance = Vector3.Distance(monster.transform.position, dest);
-            
             while (Vector3.Distance(monster.transform.position, dest) > 0.1)
             {
                 yield return null;
@@ -66,11 +64,6 @@ public class WaveManager : MonoBehaviour
                 if (!enemy.isAlive)
                 {
                     yield break;
-                }
-
-                if (Vector3.Distance(enemy.transform.position, dest) >= distance / 2)
-                {
-                    TilemapManager.Instance.EnemyOnTile(dest, enemy);
                 }
 
                 monster.transform.position = Vector3.MoveTowards(monster.transform.position, dest, enemy.Speed * Time.deltaTime);
