@@ -12,6 +12,8 @@ public class PlayerCharacter : MonoBehaviour
     private int _attackPoint = -1;
     private float _attackSpeed = -1f;
 
+    private bool _canAttack = true;
+
     #region Properties
     // stats
     protected ClassType ClassType
@@ -74,9 +76,36 @@ public class PlayerCharacter : MonoBehaviour
     
     // about attack
     protected Vector3Int CurrentTile => TilemapManager.Instance.GetCurrentTile(transform.position);
-    
     protected List<Vector3Int> TilesInRange => TilemapManager.Instance.GetTilesInRange(CurrentTile, AttackRange);
     #endregion
-    
-    
+
+    private void Start()
+    {
+        TilemapManager.Instance.EnemiesOnTile += AttackEnemy;
+    }
+
+    void AttackEnemy(Vector3Int tile, EnemyCharacter enemy)
+    {
+        foreach (Vector3Int road in TilesInRange)
+        {
+            if (tile == road)
+            {
+                if (_canAttack)
+                {
+                    StartCoroutine(Attack(enemy));
+                }
+            }
+        }
+    }
+
+    IEnumerator Attack(EnemyCharacter enemy)
+    {
+        enemy.OnDamage(AttackPoint);
+        
+        _canAttack = false;
+
+        yield return new WaitForSeconds(1f / AttackSpeed);
+
+        _canAttack = true;
+    }
 }

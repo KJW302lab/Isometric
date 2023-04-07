@@ -6,13 +6,11 @@ using UnityEngine;
 public class WaveManager : MonoBehaviour
 {
     public GameObject enemyObj;
+    public EnemyData data;
     public int amount;
 
-    private int _id = 1;
-    
-    private float _speed = 1;
-    private int _looped = 0;
-    private Queue<GameObject> _enemyList = new();
+    private int _id = 0;
+    private Queue<EnemyCharacter> _enemyList = new();
 
     private void Start()
     {
@@ -22,7 +20,11 @@ public class WaveManager : MonoBehaviour
             
             go.SetActive(false);
 
-            _enemyList.Enqueue(go);
+            EnemyCharacter enemyCharacter = go.AddComponent<EnemyCharacter>();
+            
+            enemyCharacter.Initialize(data, ++_id, go);
+
+            _enemyList.Enqueue(enemyCharacter);
         }
 
         StartCoroutine(StartWave());
@@ -34,17 +36,18 @@ public class WaveManager : MonoBehaviour
         {
             StartCoroutine(StartAttack(enemy));
 
-            yield return new WaitForSeconds(1f);   
+            yield return new WaitForSeconds(1f);
         }
     }
 
-    IEnumerator StartAttack(GameObject enemy)
+    IEnumerator StartAttack(EnemyCharacter enemy)
     {
+        var monster = enemy.monsterObj;
         var path = TilemapManager.Instance.GetPathToGo();
         var startPoint = path.Dequeue();
 
-        enemy.transform.position = startPoint;
-        enemy.SetActive(true);
+        monster.transform.position = startPoint;
+        monster.SetActive(true);
 
         yield return new WaitForSeconds(1f);
 
@@ -53,12 +56,24 @@ public class WaveManager : MonoBehaviour
         for (int i = 0; i < pathCount; i++)
         {
             var dest = path.Dequeue();
+
+            var distance = Vector3.Distance(monster.transform.position, dest);
             
-            while (Vector3.Distance(enemy.transform.position, dest) > 0.1)
+            while (Vector3.Distance(monster.transform.position, dest) > 0.1)
             {
                 yield return null;
-            
-                enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, dest, _speed * Time.deltaTime);
+
+                if (!enemy.isAlive)
+                {
+                    yield break;
+                }
+
+                if (Vector3.Distance(enemy.transform.position, dest) >= distance / 2)
+                {
+                    TilemapManager.Instance.EnemyOnTile(dest, enemy);
+                }
+
+                monster.transform.position = Vector3.MoveTowards(monster.transform.position, dest, enemy.Speed * Time.deltaTime);
             }   
         }
     }
