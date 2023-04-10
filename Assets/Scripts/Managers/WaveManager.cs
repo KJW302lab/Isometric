@@ -15,11 +15,11 @@ public class WaveInfo
 
 public class WaveManager : Singleton<WaveManager>
 {
-    private int _intervalSec = 3;
+    private readonly int _intervalSec = 3;
+    
     private Queue<EnemyCharacter> _enemyList = new();
-    
-    public bool IsWaveOver { get; private set; } = true;
-    
+    private int _monsterQuantity;
+
     private UIMain UIMain => UIManager.Instance.GetUI<UIMain>();
 
     private Transform _enemies;
@@ -38,22 +38,34 @@ public class WaveManager : Singleton<WaveManager>
     }
     
 
-    public void StartInterval(WaveInfo info)
+    public void StartInterval()
     {
-        IsWaveOver = false;
-        UIMain.AddMonsterInfo(info);
-        StartCoroutine(StartCountDown(info));
+        var waveInfo = SceneManager.Instance.GetNextInfo();
+        
+        UIMain.AddMonsterInfo(waveInfo);
+        StartCoroutine(StartCountDown(waveInfo));
+    }
+
+    void OnWaveFinish()
+    {
+        UIMain.ClearMonsterInfo();
+        
+        _enemyList.Clear();
+        
+        StartInterval();
     }
     
     IEnumerator StartCountDown(WaveInfo info)
     {
-        while (_intervalSec >= 0)
+        var interval = _intervalSec;
+        
+        while (interval >= 0)
         {
             yield return new WaitForSeconds(1f);
 
-            _intervalSec--;
+            interval--;
             
-            UIMain.SetTimerText(_intervalSec);
+            UIMain.SetTimerText(interval);
         }
         
         BeginWave(info);
@@ -63,11 +75,11 @@ public class WaveManager : Singleton<WaveManager>
     {
         foreach (var pair in info.WaveDict)
         {
-            var value = pair.Value;
+            var quantity = _monsterQuantity = pair.Value;
             var type = pair.Key;
             var data = SceneManager.Instance.GetEnemyData(type);
 
-            for (int i = 0; i < value; i++)
+            for (int i = 0; i < quantity; i++)
             {
                 GameObject go = SceneManager.Instance.GetEnemyPrefab(type);
             
@@ -76,6 +88,8 @@ public class WaveManager : Singleton<WaveManager>
                 EnemyCharacter enemyCharacter = go.GetComponent<EnemyCharacter>();
             
                 enemyCharacter.Initialize(data, go);
+
+                enemyCharacter.Defeated += CountDefeatedMonster;
                 
                 go.transform.SetParent(Enemies, false);
 
@@ -124,6 +138,16 @@ public class WaveManager : Singleton<WaveManager>
 
                 monster.transform.position = Vector3.MoveTowards(monster.transform.position, dest, enemy.Speed * Time.deltaTime);
             }   
+        }
+    }
+
+    void CountDefeatedMonster()
+    {
+        _monsterQuantity--;
+
+        if (_monsterQuantity <= 0)
+        {
+            OnWaveFinish();
         }
     }
 }

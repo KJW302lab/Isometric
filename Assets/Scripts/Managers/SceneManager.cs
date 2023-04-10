@@ -36,19 +36,17 @@ public class SceneManager : Singleton<SceneManager>
 
     private void Start()
     {
-        StartCoroutine(nameof(PrepareWave));
+        WaveManager.Instance.StartInterval();
     }
 
-    IEnumerator PrepareWave()
+    public WaveInfo GetNextInfo()
     {
-        for (int i = 0; i < _waveCount; i++)
+        if (_waveList == null || _waveList.Count <= 0)
         {
-            yield return new WaitUntil(() => WaveManager.Instance.IsWaveOver);
-            
-            var info = _waveList.Dequeue();
-            
-            WaveManager.Instance.StartInterval(info);
+            return null;
         }
+
+        return _waveList.Dequeue();
     }
 
     public GameObject GetEnemyPrefab(EnemyType type)

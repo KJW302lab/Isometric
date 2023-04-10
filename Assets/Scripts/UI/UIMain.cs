@@ -62,6 +62,16 @@ public class UIMain : MonoBehaviour
         }
     }
 
+    public void ClearMonsterInfo()
+    {
+        var infos = monsterInfo.GetComponentsInChildren<MonsterInfoItem>();
+
+        foreach (var infoItem in infos)
+        {
+            Destroy(infoItem.gameObject);
+        }
+    }
+
     #endregion
 
     #region Menu

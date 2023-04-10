@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,11 +6,14 @@ using UnityEngine.UI;
 
 public class EnemyCharacter : MonoBehaviour
 {
+    public event Action Defeated;
+    
     [SerializeField] private Scrollbar hpIndicator;
     
     public GameObject monsterObj;
     public bool isAlive = true;
 
+    private EnemyType _enemyType;
     private int _maxHp;
     private int _hp = 0;
     private float _speed = 0;
@@ -30,7 +34,7 @@ public class EnemyCharacter : MonoBehaviour
         Speed = enemyData.speed;
         Hp = enemyData.hp;
         _maxHp = enemyData.hp;
-        
+
         this.monsterObj = monsterObj;
     }
 
@@ -47,7 +51,8 @@ public class EnemyCharacter : MonoBehaviour
         if (Hp <= 0)
         {
             isAlive = false;
-            Destroy(monsterObj);
+            Defeated?.Invoke();
+            Destroy(gameObject);
         }
     }
 }
