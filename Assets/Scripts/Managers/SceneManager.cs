@@ -5,8 +5,13 @@ using UnityEngine;
 
 public class SceneManager : Singleton<SceneManager>
 {
-    [SerializeField] private List<GameObject> prefabList = new();
-    [SerializeField] private List<EnemyData> enemyDataList = new();
+    [Header("Player")]
+    [SerializeField] private List<GameObject> characterPrefabList = new();
+    [SerializeField] private List<CharacterData> characterDataList = new();
+    
+    [Header("Monster")]
+    [SerializeField] private List<GameObject> monsterPrefabList = new();
+    [SerializeField] private List<EnemyData> monsterDataList = new();
 
     private readonly Queue<WaveInfo> _waveList = new();
 
@@ -48,11 +53,36 @@ public class SceneManager : Singleton<SceneManager>
 
     public GameObject GetEnemyPrefab(EnemyType type)
     {
-        return Instantiate(prefabList[(int)type]);
+        return Instantiate(monsterPrefabList[(int)type]);
     }
 
     public EnemyData GetEnemyData(EnemyType type)
     {
-        return enemyDataList[(int)type];
+        return monsterDataList[(int)type];
+    }
+    
+    public GameObject GetCharacterPrefab(ClassType type)
+    {
+        var prefab = Instantiate(characterPrefabList[(int)type]);
+            
+        var spriteRenderer = prefab.GetComponent<SpriteRenderer>();
+        
+        switch (type)
+        {
+            case ClassType.Warrior:
+                spriteRenderer.color = Color.black;
+                break;
+            
+            case ClassType.Mage:
+                spriteRenderer.color = Color.white;
+                break;
+        }
+
+        return prefab;
+    }
+
+    public CharacterData GetCharacterData(ClassType type)
+    {
+        return characterDataList[(int)type];
     }
 }

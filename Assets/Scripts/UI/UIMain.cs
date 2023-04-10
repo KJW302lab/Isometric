@@ -1,18 +1,45 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIMain : MonoBehaviour
 {
+    [Header("Wave Information")]
     [SerializeField] private TMP_Text timer;
     [SerializeField] private Transform monsterInfo;
     [SerializeField] private GameObject monsterInfoItem;
-    
     [SerializeField] private List<Sprite> monsterImages = new();
+
+    [Header("Menu")] 
+    [SerializeField] private RectTransform bottomNav;
+    [SerializeField] private Button btnCharacter;
+
+    private bool _isBotNavOpen;
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        _isBotNavOpen = false;
+        bottomNav.gameObject.SetActive(_isBotNavOpen);
+        
+        btnCharacter.onClick.AddListener(SetBottomNavActive);
+    }
+
+    #region Wave Informations
 
     public void SetTimerText(int sec)
     {
+        if (sec <= 0)
+        {
+            timer.text = "Wave Start!";
+            return;
+        }
+        
         var time = sec.ToString();
 
         timer.text = $"{time}s";
@@ -34,4 +61,16 @@ public class UIMain : MonoBehaviour
             item.transform.SetParent(monsterInfo, false);   
         }
     }
+
+    #endregion
+
+    #region Menu
+
+    void SetBottomNavActive()
+    {
+        _isBotNavOpen = !_isBotNavOpen;
+        bottomNav.gameObject.SetActive(_isBotNavOpen);
+    }
+
+    #endregion
 }

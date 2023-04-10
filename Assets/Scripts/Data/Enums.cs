@@ -1,9 +1,9 @@
 public enum ClassType
 {
-    None,
-    Warrior,
-    Mage,
-    Archer,
+    None = 100,
+    Warrior = 0,
+    Mage = 1,
+    Archer = 2,
 }
 
 public enum TileType

@@ -6,7 +6,9 @@ using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    [SerializeField] private CharacterData data;
+    public bool IsBuilt { get; set; } = false;
+    
+    private CharacterData _data;
 
     private ClassType _classType = ClassType.None;
     private int _attackRange = -1;
@@ -24,7 +26,7 @@ public class PlayerCharacter : MonoBehaviour
         {
             if (_classType == ClassType.None)
             {
-                _classType = data.type;
+                _classType = _data.type;
             }
 
             return _classType;
@@ -38,7 +40,7 @@ public class PlayerCharacter : MonoBehaviour
         {
             if (_attackRange < 0)
             {
-                _attackRange = data.attackRange;
+                _attackRange = _data.attackRange;
             }
 
             return _attackRange;
@@ -52,7 +54,7 @@ public class PlayerCharacter : MonoBehaviour
         {
             if (_attackPoint < 0)
             {
-                _attackPoint = data.attackPoint;
+                _attackPoint = _data.attackPoint;
             }
 
             return _attackPoint;
@@ -67,7 +69,7 @@ public class PlayerCharacter : MonoBehaviour
         {
             if (_attackSpeed < 0)
             {
-                _attackSpeed = data.attackSpeed;
+                _attackSpeed = _data.attackSpeed;
             }
 
             return _attackSpeed;
@@ -81,7 +83,12 @@ public class PlayerCharacter : MonoBehaviour
     protected List<Vector3Int> TilesInRange => TilemapManager.Instance.GetTilesInRange(CurrentTile, AttackRange);
     #endregion
 
-    private void Start()
+    public void SetData(CharacterData data)
+    {
+        _data = data;
+    }
+    
+    public void Initialize()
     {
         SetColliders();
     }

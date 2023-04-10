@@ -21,6 +21,21 @@ public class WaveManager : Singleton<WaveManager>
     public bool IsWaveOver { get; private set; } = true;
     
     private UIMain UIMain => UIManager.Instance.GetUI<UIMain>();
+
+    private Transform _enemies;
+
+    private Transform Enemies
+    {
+        get
+        {
+            if (_enemies == null)
+            {
+                _enemies = new GameObject { name = "Enemy" }.transform;
+            }
+
+            return _enemies;
+        }
+    }
     
 
     public void StartInterval(WaveInfo info)
@@ -61,6 +76,8 @@ public class WaveManager : Singleton<WaveManager>
                 EnemyCharacter enemyCharacter = go.GetComponent<EnemyCharacter>();
             
                 enemyCharacter.Initialize(data, go);
+                
+                go.transform.SetParent(Enemies, false);
 
                 _enemyList.Enqueue(enemyCharacter);
             }   
