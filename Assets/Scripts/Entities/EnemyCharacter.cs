@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class EnemyCharacter : MonoBehaviour
 {
-    public event Action Defeated;
+    public event Action<EnemyCharacter> Defeated;
     
     [SerializeField] private Scrollbar hpIndicator;
     
@@ -40,7 +40,7 @@ public class EnemyCharacter : MonoBehaviour
 
     public void OnDamage(int attackPoint)
     {
-        if (monsterObj == null)
+        if (monsterObj == null || isAlive == false)
         {
             return;
         }
@@ -51,8 +51,7 @@ public class EnemyCharacter : MonoBehaviour
         if (Hp <= 0)
         {
             isAlive = false;
-            Defeated?.Invoke();
-            Destroy(gameObject);
+            Defeated?.Invoke(this);
         }
     }
 }

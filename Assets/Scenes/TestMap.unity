@@ -310,6 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7bde5ef9098e4aa79100c359867de8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roadTile: {fileID: 11400000, guid: d002dad8c80c140c38201a31088b3aa7, type: 2}
   characterPrefabList:
   - {fileID: 5233917877581602391, guid: ee93f68f55eef4ca4b8c45fb8c0e357e, type: 3}
   - {fileID: 5233917877581602391, guid: f57d8a54ff0d84ff6ba8fd4662974667, type: 3}

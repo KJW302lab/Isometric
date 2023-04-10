@@ -34,15 +34,18 @@ public class InputManager : Singleton<InputManager>
         _mouseInput.Mouse.MousePosition.performed += _ => HasTileInPointerPos();
     }
 
-    public void SetPositionForCharacter()
+    private void SetPositionForCharacter()
     {
         if (HasTileInPointerPos())
         {
-            ClickedPos?.Invoke(TilemapManager.Instance.CellToWorld(_gridPos));
+            if (TilemapManager.Instance.CanPlaceCharacter(_gridPos))
+            {
+                ClickedPos?.Invoke(TilemapManager.Instance.CellToWorld(_gridPos));   
+            }
         }
     }
 
-    public bool HasTileInPointerPos()
+    private bool HasTileInPointerPos()
     {
         Vector2 mousePosition = _mouseInput.Mouse.MousePosition.ReadValue<Vector2>();
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);

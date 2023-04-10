@@ -15,9 +15,10 @@ public class WaveInfo
 
 public class WaveManager : Singleton<WaveManager>
 {
-    private readonly int _intervalSec = 3;
+    public readonly int IntervalSec = 3;
     
-    private Queue<EnemyCharacter> _enemyList = new();
+    private List<EnemyCharacter> _enemyList = new();
+    private List<EnemyCharacter> _destroyList = new();
     private int _monsterQuantity;
 
     private UIMain UIMain => UIManager.Instance.GetUI<UIMain>();
@@ -30,17 +31,22 @@ public class WaveManager : Singleton<WaveManager>
         {
             if (_enemies == null)
             {
-                _enemies = new GameObject { name = "Enemy" }.transform;
+                _enemies = new GameObject { name = "Enemies" }.transform;
             }
 
             return _enemies;
         }
     }
-    
 
     public void StartInterval()
     {
         var waveInfo = SceneManager.Instance.GetNextInfo();
+
+        if (waveInfo == null)
+        {
+            print("Scene End");
+            return;
+        }
         
         UIMain.AddMonsterInfo(waveInfo);
         StartCoroutine(StartCountDown(waveInfo));
@@ -48,7 +54,16 @@ public class WaveManager : Singleton<WaveManager>
 
     void OnWaveFinish()
     {
+        print("Wave Finished");
+        
         UIMain.ClearMonsterInfo();
+        
+        foreach (var enemy in _destroyList)
+        {
+            Destroy(enemy.gameObject);
+        }
+        
+        _destroyList.Clear();
         
         _enemyList.Clear();
         
@@ -57,7 +72,7 @@ public class WaveManager : Singleton<WaveManager>
     
     IEnumerator StartCountDown(WaveInfo info)
     {
-        var interval = _intervalSec;
+        var interval = IntervalSec;
         
         while (interval >= 0)
         {
@@ -75,7 +90,7 @@ public class WaveManager : Singleton<WaveManager>
     {
         foreach (var pair in info.WaveDict)
         {
-            var quantity = _monsterQuantity = pair.Value;
+            var quantity = pair.Value;
             var type = pair.Key;
             var data = SceneManager.Instance.GetEnemyData(type);
 
@@ -93,7 +108,11 @@ public class WaveManager : Singleton<WaveManager>
                 
                 go.transform.SetParent(Enemies, false);
 
-                _enemyList.Enqueue(enemyCharacter);
+                _enemyList.Add(enemyCharacter);
+
+                _monsterQuantity++;
+                
+                UIMain.UpdateRemainEnemies(_monsterQuantity);
             }   
         }
 
@@ -141,9 +160,20 @@ public class WaveManager : Singleton<WaveManager>
         }
     }
 
-    void CountDefeatedMonster()
+    void CountDefeatedMonster(EnemyCharacter enemyCharacter)
     {
-        _monsterQuantity--;
+        if (_enemyList.Contains(enemyCharacter))
+        {
+            if (_destroyList.Contains(enemyCharacter))
+            {
+                return;
+            }
+            
+            _monsterQuantity--;
+            UIMain.UpdateRemainEnemies(_monsterQuantity);
+            _destroyList.Add(enemyCharacter);
+            enemyCharacter.gameObject.SetActive(false);
+        }
 
         if (_monsterQuantity <= 0)
         {

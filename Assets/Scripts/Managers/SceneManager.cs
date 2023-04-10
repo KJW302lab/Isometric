@@ -2,9 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class SceneManager : Singleton<SceneManager>
 {
+    [Header("Tiles")] 
+    public TileBase roadTile;
+    
     [Header("Player")]
     [SerializeField] private List<GameObject> characterPrefabList = new();
     [SerializeField] private List<CharacterData> characterDataList = new();
@@ -15,14 +19,12 @@ public class SceneManager : Singleton<SceneManager>
 
     private readonly Queue<WaveInfo> _waveList = new();
 
-    private int _waveCount;
-
     private void Awake()
     {
         _waveList.Enqueue(AddQueue(EnemyType.Man, 20));
         _waveList.Enqueue(AddQueue(EnemyType.Man, 30));
-
-        _waveCount = _waveList.Count;
+        
+        TilemapManager.Instance.ChangeStartGoalTileToRoad(roadTile);
     }
 
     WaveInfo AddQueue(EnemyType enemyType, int value)
@@ -61,22 +63,7 @@ public class SceneManager : Singleton<SceneManager>
     
     public GameObject GetCharacterPrefab(ClassType type)
     {
-        var prefab = Instantiate(characterPrefabList[(int)type]);
-            
-        var spriteRenderer = prefab.GetComponent<SpriteRenderer>();
-        
-        switch (type)
-        {
-            case ClassType.Warrior:
-                spriteRenderer.color = Color.black;
-                break;
-            
-            case ClassType.Mage:
-                spriteRenderer.color = Color.white;
-                break;
-        }
-
-        return prefab;
+        return Instantiate(characterPrefabList[(int)type]);
     }
 
     public CharacterData GetCharacterData(ClassType type)

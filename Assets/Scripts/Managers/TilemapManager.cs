@@ -6,11 +6,12 @@ using UnityEngine.Tilemaps;
 
 public class TileData
 {
-    public TileType type;
+    public TileType TileType;
+    public bool IsCharacterPlaced;
 
     public TileData(TileBase tile)
     {
-        type = Utils.GetTileType(tile);
+        TileType = Utils.GetTileType(tile);
     }
 }
 
@@ -34,7 +35,12 @@ public class TilemapManager : Singleton<TilemapManager>
     {
         MakeDict();
     }
-    
+
+    private void Start()
+    {
+        CharacterSpawnManager.Instance.CharacterPlaced += CharacterOnTile;
+    }
+
     private void MakeDict()
     {
         foreach (Vector3Int pos in Ground.cellBounds.allPositionsWithin)
@@ -45,17 +51,17 @@ public class TilemapManager : Singleton<TilemapManager>
 
             TileData data = new TileData(tile);
 
-            if (data.type == TileType.Start)
+            if (data.TileType == TileType.Start)
             {
                 _startTile = pos;
             }
 
-            if (data.type == TileType.End)
+            if (data.TileType == TileType.End)
             {
                 _goalTile = pos;
             }
 
-            if (data.type == TileType.Road)
+            if (data.TileType == TileType.Road)
             {
                 _roads.Add(pos);
             }
@@ -65,6 +71,12 @@ public class TilemapManager : Singleton<TilemapManager>
         
         _roads.Add(_startTile);
         _roads.Add(_goalTile);
+    }
+
+    public void ChangeStartGoalTileToRoad(TileBase roadTile)
+    {
+        Ground.SetTile(_startTile, roadTile);
+        Ground.SetTile(_goalTile, roadTile);
     }
 
     private bool IsRoadTile(Vector3Int tile)
@@ -122,5 +134,28 @@ public class TilemapManager : Singleton<TilemapManager>
         }
 
         return list;
+    }
+
+    public bool CanPlaceCharacter(Vector3Int tilePos)
+    {
+        if (Ground.HasTile(tilePos))
+        {
+            if (_tileDict[tilePos].TileType == TileType.Grass)
+            {
+                return !_tileDict[tilePos].IsCharacterPlaced;   
+            }
+        }
+
+        return false;
+    }
+
+    void CharacterOnTile(Vector3 tileWorldPos)
+    {
+        var tilePos = WorldToCell(tileWorldPos);
+
+        if (Ground.HasTile(tilePos))
+        {
+            _tileDict[tilePos].IsCharacterPlaced = true;
+        }
     }
 }

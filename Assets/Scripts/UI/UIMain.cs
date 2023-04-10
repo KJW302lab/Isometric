@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class UIMain : MonoBehaviour
 {
     [Header("Wave Information")]
-    [SerializeField] private TMP_Text timer;
+    [SerializeField] private TMP_Text txtTimer;
+    [SerializeField] private TMP_Text txtRemainEnemies;
     [SerializeField] private Transform monsterInfo;
     [SerializeField] private GameObject monsterInfoItem;
     [SerializeField] private List<Sprite> monsterImages = new();
@@ -14,12 +15,13 @@ public class UIMain : MonoBehaviour
     [Header("Menu")] 
     [SerializeField] private RectTransform bottomNav;
     [SerializeField] private Button btnCharacter;
-
+    
     private bool _isBotNavOpen;
 
     private void Awake()
     {
         Initialize();
+        SetTimerText(WaveManager.Instance.IntervalSec);
     }
 
     public void Initialize()
@@ -36,13 +38,20 @@ public class UIMain : MonoBehaviour
     {
         if (sec <= 0)
         {
-            timer.text = "Wave Start!";
+            txtTimer.text = "Wave Start!";
             return;
         }
-        
+
         var time = sec.ToString();
 
-        timer.text = $"{time}s";
+        txtTimer.text = $"{time}s";
+    }
+
+    public void UpdateRemainEnemies(int quantity)
+    {
+        txtRemainEnemies.gameObject.SetActive(true);
+        
+        txtRemainEnemies.text = $"Remain Enemies : {quantity}";
     }
 
     public void AddMonsterInfo(WaveInfo info)
