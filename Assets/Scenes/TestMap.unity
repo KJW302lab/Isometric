@@ -310,9 +310,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7bde5ef9098e4aa79100c359867de8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabList:
+  characterPrefabList:
+  - {fileID: 5233917877581602391, guid: ee93f68f55eef4ca4b8c45fb8c0e357e, type: 3}
+  - {fileID: 5233917877581602391, guid: f57d8a54ff0d84ff6ba8fd4662974667, type: 3}
+  characterDataList:
+  - {fileID: 11400000, guid: 0e7ab01054b7641b78a714d916482ddc, type: 2}
+  - {fileID: 11400000, guid: 1d892f99a55f143689a729c83dee3ea2, type: 2}
+  monsterPrefabList:
   - {fileID: 5270895318843749123, guid: 8f1229d8656794d6795068675408845f, type: 3}
-  enemyDataList:
+  monsterDataList:
   - {fileID: 11400000, guid: 700d67038deec4f439f02f0dbe4da31b, type: 2}
 --- !u!1 &1507765923
 GameObject:
